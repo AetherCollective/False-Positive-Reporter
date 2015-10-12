@@ -1,6 +1,5 @@
-#RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Res_Fileversion=1.0
+#AutoIt3Wrapper_Res_Fileversion=1.1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -11,58 +10,61 @@
 FileInstall("C:\Program Files\7-Zip\7z.exe", "7z.exe", 1)
 Opt("WinTitleMatchMode", -2)
 startup()
-;setup();Uncomment this line if you need to reconfigure Mailer. Optionally you could edit the registry keys found at "HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter"
+if $cmdlineraw = "-config" then
+	setup(); Run with -config flag to reconfigure.
+	Exit
+EndIf
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
 	$FalsePositiveSettings = GUICreate(StringTrimRight(@ScriptName, 4) & " Settings", 192, 210, 775, 254, BitOR($GUI_SS_DEFAULT_GUI, $DS_SETFOREGROUND))
 	$OkButton = GUICtrlCreateButton("Ok", 0, 184, 75, 25)
 	$CancelButton = GUICtrlCreateButton("Cancel", 116, 184, 75, 25)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server") Then
-		Global $serverDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server") Then
+		Global $serverDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server")
 	Else
 		Global $serverDefault = "smtp.gmail.com"
 	EndIf
 	$ServerInput = GUICtrlCreateInput($serverDefault, 65, 5, 121, 21)
 	$ServerLabel = GUICtrlCreateLabel("Server", 20, 8, 35, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort") Then
-		Global $IPPortDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort") Then
+		Global $IPPortDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort")
 	Else
 		Global $IPPortDefault = "465"
 	EndIf
 	$PortInput = GUICtrlCreateInput($IPPortDefault, 65, 33, 121, 21)
 	GUICtrlSetLimit(-1, 5)
 	$PortLabel = GUICtrlCreateLabel("Port", 20, 36, 23, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName") Then
-		Global $FromNameDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName") Then
+		Global $FromNameDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName")
 	Else
 		Global $FromNameDefault = "John Smith"
 	EndIf
 	$FromEmailInput = GUICtrlCreateInput($FromNameDefault, 65, 57, 121, 21)
 	$FromEmailLabel = GUICtrlCreateLabel("From", 20, 60, 27, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
-		Global $ToAddressDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
+		Global $ToAddressDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
 		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;info@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;pomoc@mks.com.pl;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;huangruimin@kingsoft.com;samples@mysecuritywin.com"
 	EndIf
 	$ToEmailInput = GUICtrlCreateInput($ToAddressDefault, 65, 81, 121, 21)
 	$ToEmailLabel = GUICtrlCreateLabel("To", 20, 84, 17, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
-		Global $UsernameDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
+		Global $UsernameDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
 	Else
 		Global $UsernameDefault = "myemail@gmail.com"
 	EndIf
 	$UserInput = GUICtrlCreateInput($UsernameDefault, 65, 105, 121, 21)
 	$UserLabel = GUICtrlCreateLabel("User", 20, 108, 26, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password") Then
-		Global $PasswordDefault = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password") Then
+		Global $PasswordDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password")
 	Else
 		Global $PasswordDefault = ""
 	EndIf
 	$PassInput = GUICtrlCreateInput($PasswordDefault, 65, 129, 121, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_PASSWORD))
 	$PassLabel = GUICtrlCreateLabel("Pass", 20, 132, 27, 17)
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl") Then
-		Global $ssl = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl") Then
+		Global $ssl = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl")
 	Else
 		Global $ssl = "4"
 	EndIf
@@ -87,52 +89,52 @@ Func setup()
 				Global $Password = GUICtrlRead($PassInput)
 				Global $FromAddress = $Username
 				Global $ssl = GUICtrlRead($UseSSL)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server", "REG_SZ", $SmtpServer)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort", "REG_SZ", $IPPort)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName", "REG_SZ", $FromName)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $ToAddress)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username", "REG_SZ", $Username)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password", "REG_SZ", $Password)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromAddress", "REG_SZ", $FromAddress)
-				RegWrite("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl", "REG_SZ", $ssl)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server", "REG_SZ", $SmtpServer)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort", "REG_SZ", $IPPort)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName", "REG_SZ", $FromName)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $ToAddress)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username", "REG_SZ", $Username)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password", "REG_SZ", $Password)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromAddress", "REG_SZ", $FromAddress)
+				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl", "REG_SZ", $ssl)
 				Return
 		EndSwitch
 	WEnd
 EndFunc   ;==>setup
 Func startup()
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server") Then
-		Global $SmtpServer = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server") Then
+		Global $SmtpServer = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server")
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort") Then
-		Global $IPPort = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort") Then
+		Global $IPPort = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort")
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName") Then
-		Global $FromName = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName") Then
+		Global $FromName = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName")
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
-		Global $ToAddress = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
+		Global $ToAddress = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
-		Global $Username = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
+		Global $Username = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
 		Global $FromAddress = $Username
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password") Then
-		Global $Password = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password") Then
+		Global $Password = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password")
 	Else
 		setup()
 	EndIf
-	If RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl") Then
-		Global $ssl = RegRead("HKLM\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl")
+	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl") Then
+		Global $ssl = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl")
 	Else
 		setup()
 	EndIf
