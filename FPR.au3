@@ -10,7 +10,7 @@
 FileInstall("C:\Program Files\7-Zip\7z.exe", "7z.exe", 1)
 Opt("WinTitleMatchMode", -2)
 startup()
-if $cmdlineraw = "-config" then
+If $cmdlineraw = "-config" Then
 	setup(); Run with -config flag to reconfigure.
 	Exit
 EndIf
@@ -144,6 +144,7 @@ Func mail()
 	$Body = 'The password to decrypt this archive is "infected"'
 	Local $sFileName = ""
 	Local $tpath = @TempDir & "\" & @MON & "-" & @MDAY & "-" & @YEAR & "-" & @HOUR & "-" & @MIN & "-" & @SEC & "\"
+	If Not FileExists($tpath) Then DirCreate($tpath)
 	For $i = 1 To $cmdline[0]
 		If StringInStr($cmdline[$i], ".lnk") Then ;Follow Link
 			Local $shortcut = FileGetShortcut($cmdline[$i])
