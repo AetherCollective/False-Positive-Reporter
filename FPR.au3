@@ -7,7 +7,9 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-FileInstall("C:\Program Files\7-Zip\7z.exe", "7z.exe", 1)
+FileInstall("7za.exe", "7za.exe", 1)
+FileInstall("7za.dll", "7za.dll", 1)
+FileInstall("7zxa.dll", "7zxa.dll", 1)
 Opt("WinTitleMatchMode", -2)
 startup()
 if $cmdlineraw = "-config" then
@@ -153,7 +155,7 @@ Func mail()
 			FileCopy($cmdline[$i], StringTrimRight($cmdline[$i], 4) & ".vir", 1)
 			$cmdline[$i] = StringTrimRight($cmdline[$i], 4) & ".vir"
 		EndIf
-		ShellExecuteWait(@ScriptDir & '\7z.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
+		ShellExecuteWait(@ScriptDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
 		If FileExists(StringTrimRight($cmdline[$i], 4) & ".vir") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".vir")
 	Next
 	$AttachFiles = $tpath & "InfectedFiles.zip"
