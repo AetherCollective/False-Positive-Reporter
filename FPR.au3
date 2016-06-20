@@ -1,5 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Res_Fileversion=1.2
+#AutoIt3Wrapper_UseUpx=y
+#AutoIt3Wrapper_UseX64=n
+#AutoIt3Wrapper_Res_Fileversion=1.2.0.1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -7,13 +9,13 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-FileInstall("7za.exe", "7za.exe", 1)
-FileInstall("7za.dll", "7za.dll", 1)
-FileInstall("7zxa.dll", "7zxa.dll", 1)
+FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
+FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
+FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
 Opt("WinTitleMatchMode", -2)
 startup()
-if $cmdlineraw = "-config" then
-	setup(); Run with -config flag to reconfigure.
+If $cmdlineraw = "-config" Then
+	setup() ; Run with -config flag to reconfigure.
 	Exit
 EndIf
 mail()
@@ -142,6 +144,7 @@ Func startup()
 	EndIf
 EndFunc   ;==>startup
 Func mail()
+	TrayTip("FPR", "Working. Please wait...", "10")
 	$Subject = "False Positive" ; subject from the email - can be anything you want it to be
 	$Body = 'The password to decrypt this archive is "infected"'
 	Local $sFileName = ""
@@ -155,7 +158,7 @@ Func mail()
 			FileCopy($cmdline[$i], StringTrimRight($cmdline[$i], 4) & ".vir", 1)
 			$cmdline[$i] = StringTrimRight($cmdline[$i], 4) & ".vir"
 		EndIf
-		ShellExecuteWait(@ScriptDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
+		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
 		If FileExists(StringTrimRight($cmdline[$i], 4) & ".vir") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".vir")
 	Next
 	$AttachFiles = $tpath & "InfectedFiles.zip"
@@ -242,6 +245,6 @@ Func MyErrFunc()
 	$oMyRet[0] = $HexNumber
 	$oMyRet[1] = StringStripWS($oMyError.description, 3)
 	ConsoleWrite("### COM Error !  Number: " & $HexNumber & "   ScriptLine: " & $oMyError.scriptline & "   Description:" & $oMyRet[1] & @CRLF)
-	SetError(1); something to check for when this function returns
+	SetError(1) ; something to check for when this function returns
 	Return
 EndFunc   ;==>MyErrFunc
