@@ -1,7 +1,8 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
 #AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=n
-#AutoIt3Wrapper_Res_Fileversion=1.2.0.1
+#AutoIt3Wrapper_Res_Fileversion=1.2.0.2
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -49,7 +50,7 @@ Func setup()
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
 		Global $ToAddressDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
-		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;virus@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;pomoc@mks.com.pl;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;huangruimin@kingsoft.com;samples@mysecuritywin.com;falsepositive@reasoncoresecurity.com"
+		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@mysecuritywin.com;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com"
 	EndIf
 	$ToEmailInput = GUICtrlCreateInput($ToAddressDefault, 65, 81, 121, 21)
 	$ToEmailLabel = GUICtrlCreateLabel("To", 20, 84, 17, 17)
