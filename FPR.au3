@@ -1,8 +1,6 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
-#AutoIt3Wrapper_UseUpx=y
-#AutoIt3Wrapper_UseX64=n
-#AutoIt3Wrapper_Res_Fileversion=1.2.0.2
+#AutoIt3Wrapper_Res_Fileversion=1.3.0.0
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -10,10 +8,12 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+OnAutoItExitRegister("_OnExit")
 FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
 FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
 FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
 Opt("WinTitleMatchMode", -2)
+Global $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CPL", ".EXE", ".HTA", ".INS", ".ISP", ".JAR", ".JS", ".JSE", ".LIB", ".LNK", ".MDE", ".MSC", ".MSP", ".MST", ".PIF", ".SCR", ".SCT", ".SHB", ".SYS", ".VB", ".VBE", ".VBS", ".VXD", ".WSC", ".WSF", ".WSH"]
 startup()
 If $cmdlineraw = "-config" Then
 	setup() ; Run with -config flag to reconfigure.
@@ -50,7 +50,7 @@ Func setup()
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
 		Global $ToAddressDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
-		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@mysecuritywin.com;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com"
+		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@xvirus.net;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com"
 	EndIf
 	$ToEmailInput = GUICtrlCreateInput($ToAddressDefault, 65, 81, 121, 21)
 	$ToEmailLabel = GUICtrlCreateLabel("To", 20, 84, 17, 17)
@@ -145,34 +145,45 @@ Func startup()
 	EndIf
 EndFunc   ;==>startup
 Func mail()
-	TrayTip("FPR", "Working. Please wait...", "10")
+	ProgressOn("False Positive Reporter", "")
 	$Subject = "False Positive" ; subject from the email - can be anything you want it to be
-	$Body = 'The password to decrypt this archive is "infected"'
+	$Body = 'The password to decrypt this archive is "infected".' & @CRLF & @CRLF & "The following files are included in this archive:" & @CRLF & @CRLF
 	Local $sFileName = ""
-	Local $tpath = @TempDir & "\" & @MON & "-" & @MDAY & "-" & @YEAR & "-" & @HOUR & "-" & @MIN & "-" & @SEC & "\"
+	Global $tpath = @TempDir & "\" & @MON & "-" & @MDAY & "-" & @YEAR & "-" & @HOUR & "-" & @MIN & "-" & @SEC & "\"
 	For $i = 1 To $cmdline[0]
+		ProgressSet($i / $cmdline[0] * 100, "Zipping Files " & $i & " of " & $cmdline[0] & ".")
 		If StringInStr($cmdline[$i], ".lnk") Then ;Follow Link
 			Local $shortcut = FileGetShortcut($cmdline[$i])
 			$cmdline[$i] = $shortcut[0]
 		EndIf
-		If StringInStr($cmdline[$i], ".exe") Then ;Bypass Email Exe filter.
-			FileCopy($cmdline[$i], StringTrimRight($cmdline[$i], 4) & ".vir", 1)
-			$cmdline[$i] = StringTrimRight($cmdline[$i], 4) & ".vir"
-		EndIf
+		For $j = 1 To UBound($BannedExtensions) - 1
+			If StringInStr($cmdline[$i], $BannedExtensions[$j]) Then ;Bypass Email Exe filter.
+				FileCopy($cmdline[$i], $cmdline[$i] & ".tmp", 1)
+				$cmdline[$i] &= ".tmp"
+			EndIf
+		Next
 		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
-		If FileExists(StringTrimRight($cmdline[$i], 4) & ".vir") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".vir")
+		If FileExists(StringTrimRight($cmdline[$i], 4) & ".tmp") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".tmp")
+		$Body &= $cmdline[$i] & @CRLF
 	Next
-	$AttachFiles = $tpath & "InfectedFiles.zip"
+	Global $AttachFiles = $tpath & "InfectedFiles.zip"
 	$CcAddress = "" ; address for cc - leave blank if not needed
 	$BccAddress = "" ; address for bcc - leave blank if not needed
 	$Importance = "High" ; Send message priority: "High", "Normal", "Low"
 	Global $oMyRet[2]
 	Global $oMyError = ObjEvent("AutoIt.Error", "MyErrFunc")
+	If FileGetSize($AttachFiles) > 25000000 Then
+		FileMove($AttachFiles, @UserProfileDir & "\Desktop\FPR-Files.zip", 1)
+		ProgressOff()
+		MsgBox(0, @ScriptName, 'File is too large to send. It has been copied to your desktop as "FPR-Files.zip".')
+		Exit
+	EndIf
+	If FileGetSize($AttachFiles) > 10000000 Then Global $FileOver10MB = 'Some vendors will reject your attachment because it was over 10 mb. Please check your email. The attachement has been copied to your desktop as "FPR-Files.zip".'
+	ProgressSet(100, "Sending Email to Anti Virus Vendors." & @CRLF & "This can take a while depending on your upload speed." & @CRLF & "Stand up and stretch while you wait.")
 	$rc = _INetSmtpMailCom($SmtpServer, $FromName, $FromAddress, $ToAddress, $Subject, $Body, $AttachFiles, $CcAddress, $BccAddress, $Importance, $Username, $Password, $IPPort, $ssl)
 	If @error Then
-		MsgBox(0, "Error sending message", "Error code:" & @error & "  Description:" & $rc)
+		If MsgBox(16 + 4, "False Positive Reporter", "Failed to send email. Please check your credentials and smtp settings. Would you like to do so now?") = 6 Then ShellExecuteWait(@ScriptFullPath, "-config")
 	EndIf
-	; The UDF
 EndFunc   ;==>mail
 Func _INetSmtpMailCom($s_SmtpServer, $s_FromName, $s_FromAddress, $s_ToAddress, $s_Subject = "", $as_Body = "", $s_AttachFiles = "", $s_CcAddress = "", $s_BccAddress = "", $s_Importance = "Normal", $s_Username = "", $s_Password = "", $IPPort = 25, $ssl = 0)
 	Local $objEmail = ObjCreate("CDO.Message")
@@ -234,13 +245,16 @@ Func _INetSmtpMailCom($s_SmtpServer, $s_FromName, $s_FromAddress, $s_ToAddress, 
 		SetError(2)
 		Return $oMyRet[1]
 	Else
-		MsgBox(0, "Email", "OK")
+		ProgressOff()
+		If IsDeclared("FileOver10MB") <> 0 Then
+			FileMove($AttachFiles, @UserProfileDir & "\Desktop\FPR-Files.zip", 1)
+			MsgBox(0, "Email", "Ok. " & @CRLF & @CRLF & $FileOver10MB)
+		Else
+			MsgBox(0, "Email", "Ok.")
+		EndIf
 	EndIf
 	$objEmail = ""
 EndFunc   ;==>_INetSmtpMailCom
-;
-;
-; Com Error Handler
 Func MyErrFunc()
 	$HexNumber = Hex($oMyError.number, 8)
 	$oMyRet[0] = $HexNumber
@@ -249,3 +263,10 @@ Func MyErrFunc()
 	SetError(1) ; something to check for when this function returns
 	Return
 EndFunc   ;==>MyErrFunc
+Func _OnExit()
+	ProgressOff()
+	DirRemove($tpath, 1)
+	FileDelete(@TempDir & "\7za.exe")
+	FileDelete(@TempDir & "\7za.dll")
+	FileDelete(@TempDir & "\7zxa.dll")
+EndFunc   ;==>_OnExit
