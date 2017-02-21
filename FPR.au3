@@ -1,7 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
 #AutoIt3Wrapper_Outfile=D:\Google Drive\Documents\Github\False-Positive-Reporter\FPR.exe
-#AutoIt3Wrapper_Res_Fileversion=1.3.0.0
+#AutoIt3Wrapper_Res_Fileversion=1.3.0.2
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -9,10 +9,6 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-OnAutoItExitRegister("_OnExit")
-FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
-FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
-FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
 Opt("WinTitleMatchMode", -2)
 Global $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CPL", ".EXE", ".HTA", ".INS", ".ISP", ".JAR", ".JS", ".JSE", ".LIB", ".LNK", ".MDE", ".MSC", ".MSP", ".MST", ".PIF", ".SCR", ".SCT", ".SHB", ".SYS", ".VB", ".VBE", ".VBS", ".VXD", ".WSC", ".WSF", ".WSH"]
 startup()
@@ -20,6 +16,10 @@ If $cmdlineraw = "-config" Then
 	setup() ; Run with -config flag to reconfigure.
 	Exit
 EndIf
+OnAutoItExitRegister("_OnExit")
+FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
+FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
+FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
