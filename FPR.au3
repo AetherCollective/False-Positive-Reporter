@@ -1,7 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
 #AutoIt3Wrapper_Outfile=D:\Google Drive\Documents\Github\False-Positive-Reporter\FPR.exe
-#AutoIt3Wrapper_Res_Fileversion=1.3.0.2
+#AutoIt3Wrapper_Res_Fileversion=1.3.0.3
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
 #include <ButtonConstants.au3>
@@ -163,12 +163,12 @@ Func mail()
 				$cmdline[$i] &= ".tmp"
 			EndIf
 		Next
-		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
+		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'FalsePositives.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
 		If FileExists(StringTrimRight($cmdline[$i], 4) & ".tmp") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".tmp")
 		$aFile=StringSplit($cmdline[$i],"/\")
 		$Body &= $aFile[$aFile[0]] & @CRLF
 	Next
-	Global $AttachFiles = $tpath & "InfectedFiles.zip"
+	Global $AttachFiles = $tpath & "FalsePositives.zip"
 	$CcAddress = "" ; address for cc - leave blank if not needed
 	$BccAddress = "" ; address for bcc - leave blank if not needed
 	$Importance = "High" ; Send message priority: "High", "Normal", "Low"
