@@ -1,5 +1,6 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
+#AutoIt3Wrapper_Outfile=D:\Google Drive\Documents\Github\False-Positive-Reporter\FPR.exe
 #AutoIt3Wrapper_Res_Fileversion=1.3.0.0
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "File.au3"
@@ -164,7 +165,8 @@ Func mail()
 		Next
 		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
 		If FileExists(StringTrimRight($cmdline[$i], 4) & ".tmp") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".tmp")
-		$Body &= $cmdline[$i] & @CRLF
+		$aFile=StringSplit($cmdline[$i],"/\")
+		$Body &= $aFile[$aFile[0]] & @CRLF
 	Next
 	Global $AttachFiles = $tpath & "InfectedFiles.zip"
 	$CcAddress = "" ; address for cc - leave blank if not needed
