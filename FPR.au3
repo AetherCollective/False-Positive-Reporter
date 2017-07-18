@@ -14,15 +14,18 @@ Global $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CP
 startup()
 If $cmdlineraw = "-update" Then
 	If MsgBox(BitOR($MB_YESNO, $MB_APPLMODAL, $MB_ICONWARNING), "False Positive Reporter", "This will overwrite the list of vendors with the latest known list. Are you sure you want to do this?") = $IDYES Then RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $VendorList)
-Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "Done.")
+	Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "Done.")
 EndIf
 If $cmdlineraw = "-config" Then
 	setup() ; Run with -config flag to reconfigure.
 EndIf
+If $cmdlineraw = "" Then Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "You must drag & drop your file onto FPR.exe")
 OnAutoItExitRegister("_OnExit")
 FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
 FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
 FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
+FileInstall("Config FPR.exe", "Config FPR.exe", 1)
+FileInstall("Update FPR.exe", "Update FPR.exe", 1)
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
@@ -107,7 +110,7 @@ Func setup()
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromAddress", "REG_SZ", $FromAddress)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl", "REG_SZ", $ssl)
 				MsgBox("", "False Positive Reporter - Saved!", "To submit a false positive, simply drag & drop your files onto FPR.exe.")
-				If MsgBox(BitOR($MB_YESNO, $MB_APPLMODAL), "False Positive Reporter", "Would you also like to add this to the Send To context menu?") = $IDYES Then FileCopy(@ScriptFullPath, @UserProfileDir & "\AppData\Roaming\Microsoft\Windows\SendTo\AV Vendors (for whitelisting).exe",1)
+				If MsgBox(BitOR($MB_YESNO, $MB_APPLMODAL), "False Positive Reporter", "Would you also like to add this to the Send To context menu?") = $IDYES Then FileCreateShortcut(@ScriptFullPath, @UserProfileDir & "\AppData\Roaming\Microsoft\Windows\SendTo\AV Vendors (for whitelisting).lnk", @ScriptDir)
 				Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "Done.")
 		EndSwitch
 	WEnd
