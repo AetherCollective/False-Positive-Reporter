@@ -1,7 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Outfile=D:\Google Drive\Documents\Github\False-Positive-Reporter\FPR.exe
 #AutoIt3Wrapper_Res_Fileversion=1.3.2.0
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#include <array.au3>
 #include <File.au3>
 #include <ButtonConstants.au3>
 #include <EditConstants.au3>
@@ -10,9 +10,9 @@
 #include <WindowsConstants.au3>
 Opt("WinTitleMatchMode", -2)
 Global $VendorList = "", $BannedExtensions = ""
-$VendorList = InetRead("https://github.com/BetaLeaf/False-Positive-Reporter/raw/master/FPR_List.txt", 1)
+$VendorList = BinaryToString(InetRead("https://raw.githubusercontent.com/BetaLeaf/False-Positive-Reporter/master/FPR_List.txt", 1))
 If $VendorList = "" Then $VendorList = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@xvirus.net;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com;virus_research@mcafee.com"
-$BannedExtensions = InetRead("https://github.com/BetaLeaf/False-Positive-Reporter/raw/master/Banned_Extensions.txt", 1)
+_ArrayInsert($BannedExtensions,BinaryToString(InetRead("https://raw.githubusercontent.com/BetaLeaf/False-Positive-Reporter/master/Banned_Extensions.txt", 1)))
 If $BannedExtensions = "" Then Dim $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CPL", ".EXE", ".HTA", ".INS", ".ISP", ".JAR", ".JS", ".JSE", ".LIB", ".LNK", ".MDE", ".MSC", ".MSP", ".MST", ".PIF", ".SCR", ".SCT", ".SHB", ".SYS", ".VB", ".VBE", ".VBS", ".VXD", ".WSC", ".WSF", ".WSH"]
 startup()
 If $cmdlineraw = "-update" Then
@@ -22,26 +22,25 @@ EndIf
 If $cmdlineraw = "-config" Then
 	setup() ; Run with -config flag to reconfigure.
 EndIf
-If $cmdlineraw = "" Then Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "You must drag & drop your file onto FPR.exe")
+If $cmdlineraw = "" Then setup()
 OnAutoItExitRegister("_OnExit")
 FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
 FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
 FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
-FileInstall("Config FPR.exe", "Config FPR.exe", 1)
 FileInstall("Update FPR.exe", "Update FPR.exe", 1)
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
-	$FalsePositiveSettings = GUICreate(StringTrimRight(@ScriptName, 4) & " Settings", 192, 210, 775, 254, BitOR($GUI_SS_DEFAULT_GUI, $DS_SETFOREGROUND))
-	$OkButton = GUICtrlCreateButton("Ok", 0, 184, 75, 25)
-	$CancelButton = GUICtrlCreateButton("Cancel", 116, 184, 75, 25)
+	$FalsePositiveSettings = GUICreate(StringTrimRight(@ScriptName, 4) & " Settings", 192, 220, 775, 254, BitOR($GUI_SS_DEFAULT_GUI, $DS_SETFOREGROUND))
+	$OkButton = GUICtrlCreateButton("Ok", 0, 194, 75, 25)
+	$CancelButton = GUICtrlCreateButton("Cancel", 116, 194, 75, 25)
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server") Then
 		Global $serverDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server")
 	Else
 		Global $serverDefault = "smtp.gmail.com"
 	EndIf
-	$ServerInput = GUICtrlCreateInput($serverDefault, 65, 5, 121, 21)
-	$ServerLabel = GUICtrlCreateLabel("Server", 20, 8, 35, 17)
+	$ServerInput = GUICtrlCreateInput($serverDefault, 65, 9, 121, 21)
+	$ServerLabel = GUICtrlCreateLabel("Server", 20, 12, 35, 17)
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort") Then
 		Global $IPPortDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort")
 	Else
@@ -60,30 +59,30 @@ Func setup()
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
 		Global $ToAddressDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
-		Global $ToAddressDefault = $VendorList
+		Global $ToAddressDefault = ""
 	EndIf
 	$ToEmailInput = GUICtrlCreateInput($ToAddressDefault, 65, 81, 121, 21)
-	$ToEmailLabel = GUICtrlCreateLabel("To", 20, 84, 17, 17)
+	$ToEmailLabel = GUICtrlCreateLabel("To" & @CRLF & "(Custom)", 20, 84, 42, 37)
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
 		Global $UsernameDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
 	Else
 		Global $UsernameDefault = "myemail@gmail.com"
 	EndIf
-	$UserInput = GUICtrlCreateInput($UsernameDefault, 65, 105, 121, 21)
-	$UserLabel = GUICtrlCreateLabel("User", 20, 108, 26, 17)
+	$UserInput = GUICtrlCreateInput($UsernameDefault, 65, 115, 121, 21)
+	$UserLabel = GUICtrlCreateLabel("User", 20, 118, 26, 17)
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password") Then
 		Global $PasswordDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password")
 	Else
 		Global $PasswordDefault = ""
 	EndIf
-	$PassInput = GUICtrlCreateInput($PasswordDefault, 65, 129, 121, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_PASSWORD))
-	$PassLabel = GUICtrlCreateLabel("Pass", 20, 132, 27, 17)
+	$PassInput = GUICtrlCreateInput($PasswordDefault, 65, 139, 121, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_PASSWORD))
+	$PassLabel = GUICtrlCreateLabel("Pass", 20, 142, 27, 17)
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl") Then
 		Global $ssl = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl")
 	Else
 		Global $ssl = "4"
 	EndIf
-	$UseSSL = GUICtrlCreateCheckbox("Use SSL?", 65, 160, 121, 17, BitOR($GUI_SS_DEFAULT_CHECKBOX, $BS_LEFT))
+	$UseSSL = GUICtrlCreateCheckbox("Use SSL?", 65, 170, 121, 17, BitOR($GUI_SS_DEFAULT_CHECKBOX, $BS_LEFT))
 	GUICtrlSetState($UseSSL, $ssl)
 	GUISetState(@SW_SHOW)
 	#EndRegion ### END Koda GUI section ###
@@ -107,7 +106,11 @@ Func setup()
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Server", "REG_SZ", $SmtpServer)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "IPPort", "REG_SZ", $IPPort)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromName", "REG_SZ", $FromName)
-				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $ToAddress)
+				If $ToAddress = "" Then
+					RegDelete("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
+				Else
+					RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $ToAddress)
+				EndIf
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username", "REG_SZ", $Username)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password", "REG_SZ", $Password)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromAddress", "REG_SZ", $FromAddress)
@@ -135,9 +138,11 @@ Func startup()
 		setup()
 	EndIf
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
-		Global $ToAddress = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
+		Global $ToAddress = $VendorList
+		$ToAddress &= ";" & RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
+		$ToAddress = StringReplace($ToAddress, ";;", ";")
 	Else
-		setup()
+		Global $ToAddress = $VendorList
 	EndIf
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username") Then
 		Global $Username = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Username")
@@ -195,7 +200,8 @@ Func mail()
 	ProgressSet(100, "Sending Email to Anti Virus Vendors." & @CRLF & "This can take a while depending on your upload speed." & @CRLF & "Stand up and stretch while you wait.")
 	$rc = _INetSmtpMailCom($SmtpServer, $FromName, $FromAddress, $ToAddress, $Subject, $Body, $AttachFiles, $CcAddress, $BccAddress, $Importance, $Username, $Password, $IPPort, $ssl)
 	If @error Then
-		If MsgBox(16 + 4, "False Positive Reporter", "Failed to send email. Please check your credentials and smtp settings. Would you like to do so now?") = 6 Then ShellExecuteWait(@ScriptFullPath, "-config")
+		ProgressOff()
+		If MsgBox(16 + 4, "False Positive Reporter", "Failed to send email. Please check your credentials and smtp settings. Would you like to do so now?"&@CRLF&@CRLF&"Error: "&$rc) = 6 Then ShellExecuteWait(@ScriptFullPath, "-config")
 	EndIf
 EndFunc   ;==>mail
 Func _INetSmtpMailCom($s_SmtpServer, $s_FromName, $s_FromAddress, $s_ToAddress, $s_Subject = "", $as_Body = "", $s_AttachFiles = "", $s_CcAddress = "", $s_BccAddress = "", $s_Importance = "Normal", $s_Username = "", $s_Password = "", $IPPort = 25, $ssl = 0)
