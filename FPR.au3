@@ -1,24 +1,34 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=C:\ISN AutoIt Studio\autoitstudioicon.ico
-#AutoIt3Wrapper_Res_Fileversion=1.3.0.0
+#AutoIt3Wrapper_Outfile=D:\Google Drive\Documents\Github\False-Positive-Reporter\FPR.exe
+#AutoIt3Wrapper_Res_Fileversion=1.3.2.0
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
-#include "File.au3"
+#include <File.au3>
 #include <ButtonConstants.au3>
 #include <EditConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+Opt("WinTitleMatchMode", -2)
+Global $VendorList = "", $BannedExtensions = ""
+$VendorList = InetRead("https://github.com/BetaLeaf/False-Positive-Reporter/raw/master/FPR_List.txt", 1)
+If $VendorList = "" Then $VendorList = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@xvirus.net;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com;virus_research@mcafee.com"
+$BannedExtensions = InetRead("https://github.com/BetaLeaf/False-Positive-Reporter/raw/master/Banned_Extensions.txt", 1)
+If $BannedExtensions = "" Then Dim $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CPL", ".EXE", ".HTA", ".INS", ".ISP", ".JAR", ".JS", ".JSE", ".LIB", ".LNK", ".MDE", ".MSC", ".MSP", ".MST", ".PIF", ".SCR", ".SCT", ".SHB", ".SYS", ".VB", ".VBE", ".VBS", ".VXD", ".WSC", ".WSF", ".WSH"]
+startup()
+If $cmdlineraw = "-update" Then
+	If MsgBox(BitOR($MB_YESNO, $MB_APPLMODAL, $MB_ICONWARNING), "False Positive Reporter", "This will overwrite the list of vendors with the latest known list. Are you sure you want to do this?") = $IDYES Then RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress", "REG_SZ", $VendorList)
+	Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "Done.")
+EndIf
+If $cmdlineraw = "-config" Then
+	setup() ; Run with -config flag to reconfigure.
+EndIf
+If $cmdlineraw = "" Then Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "You must drag & drop your file onto FPR.exe")
 OnAutoItExitRegister("_OnExit")
 FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
 FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
 FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
-Opt("WinTitleMatchMode", -2)
-Global $BannedExtensions = [".ADE", ".ADP", ".BAT", ".CHM", ".CMD", ".COM", ".CPL", ".EXE", ".HTA", ".INS", ".ISP", ".JAR", ".JS", ".JSE", ".LIB", ".LNK", ".MDE", ".MSC", ".MSP", ".MST", ".PIF", ".SCR", ".SCT", ".SHB", ".SYS", ".VB", ".VBE", ".VBS", ".VXD", ".WSC", ".WSF", ".WSH"]
-startup()
-If $cmdlineraw = "-config" Then
-	setup() ; Run with -config flag to reconfigure.
-	Exit
-EndIf
+FileInstall("Config FPR.exe", "Config FPR.exe", 1)
+FileInstall("Update FPR.exe", "Update FPR.exe", 1)
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
@@ -50,7 +60,7 @@ Func setup()
 	If RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress") Then
 		Global $ToAddressDefault = RegRead("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ToAddress")
 	Else
-		Global $ToAddressDefault = "support.is@cmclab.net;samples@digital-defender.com;sample@preventon.com;support-tech@returnil.com;malwaresample@herdprotect.com;info@chicalogic.com;submit@antiy.com;avlnetwork@antiy.com;virus@arcabit.com;v3sos@ahnlab.com;virus@avast.com;virus@avira.com;virus_submission@bitdefender.com;samples@bluepointsecurity.com;malwaresubmit@avlab.comodo.com;vms@drweb.com;malware@emcosoftware.com;submit@emsisoft.com;virus@esafe.com;samples@escanav.com;submitvirus@fortinet.com;research@spy-emergency.com;viruslab@f-prot.com;labs@fsb-antivirus.com;vsamples@f-secure.com;samples@ikarus.at;submit@samples.immunet.com;newvirus@kaspersky.com;support@jiangmin.com;research@lavasoft.com;virus_research@avertlabs.com;virus@micropoint.com.cn;avsubmit@submit.microsoft.com;virus@nanoav.ru;samples@eset.com;support@noralabs.com;support@norman.com;virus_info@inca.co.kr;virus@pandasecurity.com;psafe@psafe.com;kefu@360.cn;support@rubus.co.in;newvirus@s-cop.com;samples@sophos.com;detections@spybot.info;vlab@srnmicro.com;avsubmit@symantec.com;virus@hacksoft.com.pe;virus@thirtyseven4.com;cainfo@ca.com;submit@trojanhunter.com;support@simplysup.com;virus@filseclab.com;malware-cruncher@sunbelt-software.com;viruslab@hauri.co.kr;newvirus@anti-virus.by;virus@zillya.com;huangruimin@kingsoft.com;support@aegislab.com;viruslab@quickheal.com;trojans@agnitum.com;bav@baidu.com;bkav@bkav.com.vn;samples@xvirus.net;falsepositive@reasoncoresecurity.com;virus_research_gateway@avertlabs.com"
+		Global $ToAddressDefault = $VendorList
 	EndIf
 	$ToEmailInput = GUICtrlCreateInput($ToAddressDefault, 65, 81, 121, 21)
 	$ToEmailLabel = GUICtrlCreateLabel("To", 20, 84, 17, 17)
@@ -102,7 +112,9 @@ Func setup()
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "Password", "REG_SZ", $Password)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "FromAddress", "REG_SZ", $FromAddress)
 				RegWrite("HKCU\SOFTWARE\BetaLeaf Software\FalsePositiveReporter", "ssl", "REG_SZ", $ssl)
-				Return
+				MsgBox("", "False Positive Reporter - Saved!", "To submit a false positive, simply drag & drop your files onto FPR.exe.")
+				If MsgBox(BitOR($MB_YESNO, $MB_APPLMODAL), "False Positive Reporter", "Would you also like to add this to the Send To context menu?") = $IDYES Then FileCreateShortcut(@ScriptFullPath, @UserProfileDir & "\AppData\Roaming\Microsoft\Windows\SendTo\AV Vendors (for whitelisting).lnk", @ScriptDir)
+				Exit MsgBox($MB_APPLMODAL, "False Positive Reporter", "Done.")
 		EndSwitch
 	WEnd
 EndFunc   ;==>setup
@@ -162,11 +174,12 @@ Func mail()
 				$cmdline[$i] &= ".tmp"
 			EndIf
 		Next
-		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'InfectedFiles.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
+		ShellExecuteWait(@TempDir & '\7za.exe', 'a -tzip "' & $tpath & 'FalsePositives.zip" "' & $cmdline[$i] & '" -pinfected', $tpath, '', @SW_HIDE)
 		If FileExists(StringTrimRight($cmdline[$i], 4) & ".tmp") Then FileDelete(StringTrimRight($cmdline[$i], 4) & ".tmp")
-		$Body &= $cmdline[$i] & @CRLF
+		$aFile = StringSplit($cmdline[$i], "/\")
+		$Body &= $aFile[$aFile[0]] & @CRLF
 	Next
-	Global $AttachFiles = $tpath & "InfectedFiles.zip"
+	Global $AttachFiles = $tpath & "FalsePositives.zip"
 	$CcAddress = "" ; address for cc - leave blank if not needed
 	$BccAddress = "" ; address for bcc - leave blank if not needed
 	$Importance = "High" ; Send message priority: "High", "Normal", "Low"
@@ -178,7 +191,7 @@ Func mail()
 		MsgBox(0, @ScriptName, 'File is too large to send. It has been copied to your desktop as "FPR-Files.zip".')
 		Exit
 	EndIf
-	If FileGetSize($AttachFiles) > 10000000 Then Global $FileOver10MB = 'Some vendors will reject your attachment because it was over 10 mb. Please check your email. The attachement has been copied to your desktop as "FPR-Files.zip".'
+	If FileGetSize($AttachFiles) > 10000000 Then Global $FileOver10MB = 'Some vendors will reject your attachment because it was over 10 mb. Please verify that the email was sent by checking your sent folder. The attachement has been copied to your desktop as "FPR-Files.zip".'
 	ProgressSet(100, "Sending Email to Anti Virus Vendors." & @CRLF & "This can take a while depending on your upload speed." & @CRLF & "Stand up and stretch while you wait.")
 	$rc = _INetSmtpMailCom($SmtpServer, $FromName, $FromAddress, $ToAddress, $Subject, $Body, $AttachFiles, $CcAddress, $BccAddress, $Importance, $Username, $Password, $IPPort, $ssl)
 	If @error Then
