@@ -1,5 +1,5 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Res_Fileversion=1.0
+#AutoIt3Wrapper_Res_Fileversion=1.1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <InetConstants.au3>
 #include <Misc.au3>
