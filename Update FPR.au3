@@ -3,7 +3,7 @@
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <InetConstants.au3>
 #include <Misc.au3>
-Download(BinaryToString(InetRead("https://github.com/BetaLeaf/False-Positive-Reporter/raw/master/Update.txt", 1)), "FPR.exe", "FPR.exe")
+Download(BinaryToString(InetRead("https://raw.githubusercontent.com/BetaLeaf/False-Positive-Reporter/master/Update.txt", 1)), "FPR.exe", "FPR.exe")
 ShellExecute("FPR.exe", "", @ScriptDir)
 
 Func Download($sSrc, $sDest, $sName)
