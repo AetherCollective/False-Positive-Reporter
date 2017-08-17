@@ -23,6 +23,7 @@ OnAutoItExitRegister("_OnExit")
 FileInstall("7za.exe", @TempDir & "\7za.exe", 1)
 FileInstall("7za.dll", @TempDir & "\7za.dll", 1)
 FileInstall("7zxa.dll", @TempDir & "\7zxa.dll", 1)
+FileInstall("Update FPR.exe", "Update FPR.exe", 1)
 mail()
 Func setup()
 	#Region ### START Koda GUI section ### Form=
